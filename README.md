@@ -7,7 +7,7 @@
 # OkapiLib 5
 
 A maintainance fork of [OkapiLib](https://github.com/OkapiLib/OkapiLib), a PROS library for programming VEX V5 robots. 
-Due to the wide use of the library, us at the PROS team are working to maintain it so that it continues to
+Due to the widespread use of the library, we at the PROS team are working to maintain it so that it continues to
 work with future versions of PROS.
 
 This library is intended to raise the floor for teams
@@ -29,7 +29,7 @@ okapilib`.
 ## Contributing
 
 Although we are not adding new features to OkapiLib, bug reports are still greatly appreciated!
-Additionally, we may still add changes and features that community conributes. If you
+Additionally, we may still add changes and features that community contributes. If you
 have added a feature you would like to share with the rest of the community, please open a pull
 request!
 
@@ -52,7 +52,7 @@ file for the full license.
 
 ## Acknowledgments
 
-We would like to thank all of those who helped to build OkapiLib and make it what it became:
+We would like to thank all of those who helped to build OkapiLib and made it what it became:
  - Salmon 
  - [Brad Miller and WPIlib](https://github.com/wpilibsuite/allwpilib)
  - The community that helped this library grow
