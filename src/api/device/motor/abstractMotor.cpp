@@ -13,11 +13,23 @@ AbstractMotor::GearsetRatioPair operator*(const AbstractMotor::gearset gearset,
   return AbstractMotor::GearsetRatioPair(gearset, ratio);
 }
 
+void AbstractMotor::VoltageControllerOutput::controllerSet(double ivalue) {
+  internalMotor.moveVoltage(ivalue * 12000);
+}
+
 double AbstractMotor::getPositionError() {
   return getTargetPosition() - getPosition();
 }
 
 double AbstractMotor::getVelocityError() {
   return getTargetVelocity() - getActualVelocity();
+}
+
+std::shared_ptr<AbstractMotor::VoltageControllerOutput> AbstractMotor::getVoltageControllerOutput() {
+  if (ivoltageController == nullptr) {
+    ivoltageController = std::make_shared<VoltageControllerOutput>(*this);
+  }
+
+  return ivoltageController;
 }
 } // namespace okapi

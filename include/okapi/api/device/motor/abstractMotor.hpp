@@ -65,6 +65,35 @@ class AbstractMotor : public ControllerOutput<double> {
     double ratio = 1;
   };
 
+  /**
+   * A wrapper that allows Controllers to set the voltage of a motor.
+   */
+  class VoltageControllerOutput : ControllerOutput<double> {
+    public:
+    /**
+     * A wrapper class allows Controllers to set the voltage of a motor.
+     *
+     * This should only be instantiated by the motor itself
+     *
+     * @param iabstractMotor The motor to control.
+     */
+    explicit VoltageControllerOutput(AbstractMotor &iabstractMotor)
+      : internalMotor(iabstractMotor){
+    }
+
+    /**
+     * Controller method: sets the voltage for the motor.
+     *
+     * The voltage is scaled to the range [-12000, 12000].
+     *
+     * @param ivalue The new setpoint
+     */
+    void controllerSet(double ivalue) override;
+
+    private:
+    AbstractMotor &internalMotor;
+  };
+
   virtual ~AbstractMotor();
 
   /******************************************************************************/
@@ -530,6 +559,16 @@ class AbstractMotor : public ControllerOutput<double> {
    * @return the encoder for this motor
    */
   virtual std::shared_ptr<ContinuousRotarySensor> getEncoder() = 0;
+
+  /**
+   * Returns the voltage ControllerOutput associated with this motor.
+   *
+   * @return the voltage ControllerOutput for this motor
+   */
+  std::shared_ptr<VoltageControllerOutput> getVoltageControllerOutput();
+
+  private:
+  std::shared_ptr<VoltageControllerOutput> ivoltageController;
 };
 
 AbstractMotor::GearsetRatioPair operator*(AbstractMotor::gearset gearset, double ratio);

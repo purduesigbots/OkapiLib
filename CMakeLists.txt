@@ -189,6 +189,7 @@ add_executable(OkapiLibV5
         test/implMocks.cpp
         test/twoEncoderOdometryTests.cpp
         test/utilTests.cpp
+        test/voltageControllerOutputTests.cpp
         test/unitTests.cpp
         test/loggerTests.cpp
         test/skidSteerModelTests.cpp
