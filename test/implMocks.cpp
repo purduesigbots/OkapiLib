@@ -192,7 +192,7 @@ MockTimer::MockTimer() : AbstractTimer(millis()) {
 
 QTime MockTimer::millis() const {
   return std::chrono::duration_cast<std::chrono::milliseconds>(
-           std::chrono::high_resolution_clock::now() - epoch)
+           std::chrono::system_clock::now() - epoch)
            .count() *
          millisecond;
 }

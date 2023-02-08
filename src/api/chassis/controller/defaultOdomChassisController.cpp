@@ -39,7 +39,9 @@ void DefaultOdomChassisController::driveToPoint(const Point &ipoint,
                                                 const QLength &ioffset) {
   waitForOdomTask();
 
-  auto [length, angle] = OdomMath::computeDistanceAndAngleToPoint(
+  QLength length;
+  QAngle angle;
+  std::tie<QLength, QAngle>(length, angle) = OdomMath::computeDistanceAndAngleToPoint(
     ipoint.inFT(defaultStateMode), odom->getState(StateMode::FRAME_TRANSFORMATION));
 
   if (ibackwards) {

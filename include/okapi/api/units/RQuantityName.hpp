@@ -2,6 +2,7 @@
 #include "okapi/api/units/QLength.hpp"
 #include "okapi/api/units/QSpeed.hpp"
 #include <stdexcept>
+#include <string>
 #include <typeindex>
 #include <unordered_map>
 

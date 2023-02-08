@@ -251,7 +251,7 @@ class MockTimer : public AbstractTimer {
 
   QTime millis() const override;
 
-  std::chrono::system_clock::time_point epoch = std::chrono::high_resolution_clock::from_time_t(0);
+  std::chrono::system_clock::time_point epoch = std::chrono::system_clock::from_time_t(0);
 };
 
 /**
