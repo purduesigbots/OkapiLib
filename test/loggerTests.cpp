@@ -165,22 +165,23 @@ TEST_F(LoggerTest, DebugLevel) {
 }
 
 TEST_F(LoggerTest, TestLazyLogging) {
-  rewind(logFile);
   logger = std::make_shared<Logger>(
-    std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::info);
+    std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::debug);
 
-  int x = 0;
-  logger->debug([=, &x]() {
-    x++;
-    return std::string("");
+  logger->debug([=]() {
+    return std::string("MSG");
   });
 
-  EXPECT_EQ(x, 0);
+  rewind(logFile);
 
   char *line = nullptr;
   size_t len;
 
   getline(&line, &len, logFile);
+  std::string expected = "0 (" + CrossplatformThread::getName() + ") DEBUG: MSG\n";
+  EXPECT_STREQ(line, expected.c_str());
+
+  EXPECT_EQ(getline(&line, &len, logFile), EOF);
 
   if (line) {
     free(line);
