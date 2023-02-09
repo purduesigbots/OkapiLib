@@ -23,6 +23,7 @@ class LoggerTest : public ::testing::Test {
     if (logger) {
       logger->close();
     }
+    delete[] logBuffer;
   }
 
   void logData(const std::shared_ptr<Logger> &) const {
