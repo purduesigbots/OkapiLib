@@ -12,7 +12,10 @@ using namespace okapi;
 class LoggerTest : public ::testing::Test {
   protected:
   virtual void SetUp() {
-    logFile = open_memstream(&logBuffer, &logSize);
+    logBuffer = new char[logSize];
+    // For testing, we always write, then rewind and read
+    // so it is not an issue to open in write vs append
+    logFile = fmemopen(logBuffer, logSize, "w+");
   }
 
   virtual void TearDown() {
@@ -20,7 +23,6 @@ class LoggerTest : public ::testing::Test {
     if (logger) {
       logger->close();
     }
-    free(logBuffer);
   }
 
   void logData(const std::shared_ptr<Logger> &) const {
@@ -32,7 +34,7 @@ class LoggerTest : public ::testing::Test {
 
   FILE *logFile;
   char *logBuffer;
-  size_t logSize;
+  size_t logSize = 10000;
   std::shared_ptr<Logger> logger;
 };
 
@@ -41,6 +43,8 @@ TEST_F(LoggerTest, OffLevel) {
     std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::off);
 
   logData(logger);
+  fputs("EMPTY_FILE", logFile);
+  rewind(logFile);
 
   char *line = nullptr;
   size_t len;
@@ -60,6 +64,7 @@ TEST_F(LoggerTest, ErrorLevel) {
     std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::error);
 
   logData(logger);
+  rewind(logFile);
 
   char *line = nullptr;
   size_t len;
@@ -78,6 +83,7 @@ TEST_F(LoggerTest, WarningLevel) {
     std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::warn);
 
   logData(logger);
+  rewind(logFile);
 
   char *line = nullptr;
   size_t len;
@@ -100,6 +106,7 @@ TEST_F(LoggerTest, InfoLevel) {
     std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::info);
 
   logData(logger);
+  rewind(logFile);
 
   char *line = nullptr;
   size_t len;
@@ -126,6 +133,7 @@ TEST_F(LoggerTest, DebugLevel) {
     std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::debug);
 
   logData(logger);
+  rewind(logFile);
 
   char *line = nullptr;
   size_t len;
@@ -152,6 +160,7 @@ TEST_F(LoggerTest, DebugLevel) {
 }
 
 TEST_F(LoggerTest, TestLazyLogging) {
+  rewind(logFile);
   logger = std::make_shared<Logger>(
     std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::info);
 
