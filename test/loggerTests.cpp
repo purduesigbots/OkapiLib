@@ -43,16 +43,13 @@ TEST_F(LoggerTest, OffLevel) {
     std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::off);
 
   logData(logger);
-  fputs("EMPTY_FILE", logFile);
   rewind(logFile);
 
   char *line = nullptr;
   size_t len;
 
-  fputs("EMPTY_FILE", logFile);
-
-  getline(&line, &len, logFile);
-  EXPECT_STREQ(line, "EMPTY_FILE");
+  // Check that we are done reading
+  EXPECT_EQ(getline(&line, &len, logFile), EOF);
 
   if (line) {
     free(line);
@@ -72,6 +69,8 @@ TEST_F(LoggerTest, ErrorLevel) {
   getline(&line, &len, logFile);
   std::string expected = "0 (" + CrossplatformThread::getName() + ") ERROR: MSG\n";
   EXPECT_STREQ(line, expected.c_str());
+
+  EXPECT_EQ(getline(&line, &len, logFile), EOF);
 
   if (line) {
     free(line);
@@ -95,6 +94,8 @@ TEST_F(LoggerTest, WarningLevel) {
   getline(&line, &len, logFile);
   expected = "0 (" + CrossplatformThread::getName() + ") WARN: MSG\n";
   EXPECT_STREQ(line, expected.c_str());
+
+  EXPECT_EQ(getline(&line, &len, logFile), EOF);
 
   if (line) {
     free(line);
@@ -122,6 +123,8 @@ TEST_F(LoggerTest, InfoLevel) {
   getline(&line, &len, logFile);
   expected = "0 (" + CrossplatformThread::getName() + ") INFO: MSG\n";
   EXPECT_STREQ(line, expected.c_str());
+
+  EXPECT_EQ(getline(&line, &len, logFile), EOF);
 
   if (line) {
     free(line);
@@ -153,6 +156,8 @@ TEST_F(LoggerTest, DebugLevel) {
   getline(&line, &len, logFile);
   expected = "0 (" + CrossplatformThread::getName() + ") DEBUG: MSG\n";
   EXPECT_STREQ(line, expected.c_str());
+
+  EXPECT_EQ(getline(&line, &len, logFile), EOF);
 
   if (line) {
     free(line);
