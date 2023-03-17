@@ -11,6 +11,7 @@
 #include "okapi/impl/util/rate.hpp"
 #include "okapi/impl/util/timer.hpp"
 #include <stdexcept>
+#include <cstring>
 
 namespace okapi {
 ChassisControllerBuilder::ChassisControllerBuilder(const std::shared_ptr<Logger> &ilogger)
