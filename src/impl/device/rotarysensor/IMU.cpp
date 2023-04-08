@@ -101,21 +101,18 @@ double IMU::controllerGet() {
 }
 
 double IMU::readAngle() const {
-  //const pros::c::euler_s_t eu = pros::c::imu_get_euler(port);
+  const pros::euler_s_t eu = pros::c::imu_get_euler(port);
   double angle = 0;
 
   switch (axis) {
   case IMUAxes::x:
-    //angle = eu.roll;
-    angle = pros::get_roll(port);
+    angle = eu.roll;
     break;
   case IMUAxes::y:
-    //angle = eu.pitch;
-    angle = pros::get_pitch(port);
+    angle = eu.pitch;
     break;
   case IMUAxes::z:
-    //angle = eu.yaw;
-    angle = pros::get_yaw(port);
+    angle = eu.yaw;
     break;
   }
 
