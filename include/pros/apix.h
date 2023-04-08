@@ -1,5 +1,6 @@
 /**
  * \file pros/apix.h
+ * \ingroup apix
  *
  * PROS Extended API header
  *
@@ -12,21 +13,24 @@
  * This file should not be modified by users, since it gets replaced whenever
  * a kernel upgrade occurs.
  *
- * Copyright (c) 2017-2020, Purdue University ACM SIGBots.
+ * \copyright (c) 2017-2023, Purdue University ACM SIGBots.
  * All rights reserved.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ * 
+ * \defgroup apix Extended API
+ * \note Also included in the Extended API is [LVGL.](https://lvgl.io/)
  */
 
 #ifndef _PROS_API_EXTENDED_H_
 #define _PROS_API_EXTENDED_H_
 
 #include "api.h"
+#include "pros/device.h"
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wall"
-#include "display/lvgl.h"
 #pragma GCC diagnostic pop
 #include "pros/serial.h"
 
@@ -36,12 +40,18 @@ namespace pros::c {
 extern "C" {
 #endif
 
-/******************************************************************************/
-/**                             RTOS FACILITIES                              **/
-/**                                                                          **/
-/**                                                                          **/
-/**See https://pros.cs.purdue.edu/v5/extended/multitasking.html to learn more**/
-/******************************************************************************/
+/**
+ * \ingroup apix
+ */
+
+/**
+ * \addtogroup apix
+ *  @{
+ */
+
+/// \name RTOS Facilities
+/// See https://pros.cs.purdue.edu/v5/extended/multitasking.html to learn more
+///@{
 
 typedef void* queue_t;
 typedef void* sem_t;
@@ -356,39 +366,20 @@ void queue_delete(queue_t queue);
  */
 void queue_reset(queue_t queue);
 
-/******************************************************************************/
-/**                           Device Registration                            **/
-/******************************************************************************/
+///@}
 
-/*
- * List of possible v5 devices
- *
- * This list contains all current V5 Devices, and mirrors V5_DeviceType from the
- * api.
- */
-typedef enum v5_device_e {
-	E_DEVICE_NONE = 0,
-	E_DEVICE_MOTOR = 2,
-	E_DEVICE_ROTATION = 4,
-	E_DEVICE_IMU = 6,
-	E_DEVICE_DISTANCE = 7,
-	E_DEVICE_RADIO = 8,
-	E_DEVICE_VISION = 11,
-	E_DEVICE_ADI = 12,
-	E_DEVICE_OPTICAL = 16,
-	E_DEVICE_GENERIC = 129,
-	E_DEVICE_UNDEFINED = 255
-} v5_device_e_t;
+/// \name Device Registration
+///@{
 
-/*
- * Registers a device in the given port
+/**
+ * Registers a device in the given zero-indexed port
  *
  * Registers a device of the given type in the given port into the registry, if
  * that type of device is detected to be plugged in to that port.
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21), or a
+ * ENXIO - The given value is not within the range of V5 ports (0-20), or a
  * a different device than specified is plugged in.
  * EADDRINUSE - The port is already registered to another device.
  *
@@ -401,14 +392,14 @@ typedef enum v5_device_e {
  */
 int registry_bind_port(uint8_t port, v5_device_e_t device_type);
 
-/*
- * Deregisters a devices from the given port
+/**
+ * Deregisters a devices from the given zero-indexed port
  *
  * Removes the device registed in the given port, if there is one.
  *
  * This function uses the following values of errno when an error state is
  * reached:
- * ENXIO - The given value is not within the range of V5 ports (1-21).
+ * ENXIO - The given value is not within the range of V5 ports (0-20).
  *
  * \param port
  *        The port number to deregister
@@ -417,9 +408,41 @@ int registry_bind_port(uint8_t port, v5_device_e_t device_type);
  */
 int registry_unbind_port(uint8_t port);
 
-/******************************************************************************/
-/**                               Filesystem                                 **/
-/******************************************************************************/
+/**
+ * Returns the type of device registered to the zero-indexed port.
+ *
+ * This function uses the following values of errno when an error state is
+ * reached:
+ * ENXIO - The given value is not within the range of V5 ports (0-20).
+ *
+ * \param port
+ *        The V5 port number from 0-20
+ *
+ * \return The type of device that is registered into the port (NOT what is
+ * plugged in)
+ */
+v5_device_e_t registry_get_bound_type(uint8_t port);
+
+/**
+ * Returns the type of the device plugged into the zero-indexed port.
+ *
+ * This function uses the following values of errno when an error state is
+ * reached:
+ * ENXIO - The given value is not within the range of V5 ports (0-20).
+ *
+ * \param port
+ *        The V5 port number from 0-20
+ *
+ * \return The type of device that is plugged into the port (NOT what is
+ * registered)
+ */
+v5_device_e_t registry_get_plugged_type(uint8_t port);
+
+///@}
+
+/// \name Filesystem
+///@{
+
 /**
  * Control settings of the serial driver.
  *
@@ -457,6 +480,58 @@ int32_t serctl(const uint32_t action, void* const extra_arg);
  * 		  	An argument to pass in based on the action
  */
 int32_t fdctl(int file, const uint32_t action, void* const extra_arg);
+
+/**
+ * Sets the reverse flag for the motor.
+ *
+ * This will invert its movements and the values returned for its position.
+ *
+ * This function uses the following values of errno when an error state is
+ * reached:
+ * ENXIO - The given value is not within the range of V5 ports (1-21).
+ * ENODEV - The port cannot be configured as a motor
+ *
+ * \param port
+ *        The V5 port number from 1-21
+ * \param reverse
+ *        True reverses the motor, false is default
+ *
+ * \return 1 if the operation was successful or PROS_ERR if the operation
+ * failed, setting errno.
+ * 
+ * \b Example
+ * \code
+ * void autonomous() {
+ *   motor_set_reversed(1, true);
+ *   printf("Is this motor reversed? %d\n", motor_is_reversed(1));
+ * }
+ * \endcode
+ */
+int32_t motor_set_reversed(int8_t port, const bool reverse);
+
+/**
+ * Gets the operation direction of the motor as set by the user.
+ *
+ * This function uses the following values of errno when an error state is
+ * reached:
+ * ENXIO - The given value is not within the range of V5 ports (1-21).
+ * ENODEV - The port cannot be configured as a motor
+ *
+ * \param port
+ *        The V5 port number from 1-21
+ *
+ * \return 1 if the motor has been reversed and 0 if the motor was not reversed,
+ * or PROS_ERR if the operation failed, setting errno.
+ * 
+ * \b Example
+ * \code
+ * void initialize() {
+ *   printf("Is the motor reversed? %d\n", motor_is_reversed(1));
+ *   // Prints "Is the motor reversed? 0"
+ * }
+ * \endcode
+ */
+int32_t motor_is_reversed(int8_t port);
 
 /**
  * Action macro to pass into serctl or fdctl that activates the stream
@@ -552,6 +627,10 @@ int32_t fdctl(int file, const uint32_t action, void* const extra_arg);
  * The extra argument is the baudrate.
  */
 #define DEVCTL_SET_BAUDRATE 17
+
+///@}
+
+///@}
 
 #ifdef __cplusplus
 }
