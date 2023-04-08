@@ -12,20 +12,11 @@ jobs:
         uses: styfle/cancel-workflow-action@0.6.0
         with:
           access_token: ${{ github.token }}
-          
-      - name: Install wget
-        run: sudo apt-get install wget -y
 
       - uses: actions/checkout@v1
 
       - name: Update Submodules
         run: git submodule update --init --recursive
-      
-      - name: Install ARM Embedded Toolchain for C++20
-        run: |
-          wget -O arm_toolchain.tar.gz https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
-          tar -xvf arm_toolchain.tar.gz
-          export PATH=$PWD/gcc-arm-none-eabi-11.3-2021.10/bin:$PATH
 
       - name: Make
         run: make
