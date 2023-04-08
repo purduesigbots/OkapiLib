@@ -105,7 +105,7 @@ std::int32_t Motor::isStopped() {
 }
 
 std::int32_t Motor::getZeroPositionFlag() {
-  return pros::c::motor_get_zero_position_flag(port);
+  return pros::c::motor_get_flags(port) & pros::E_MOTOR_FLAGS_ZERO_POSITION;
 }
 
 uint32_t Motor::getFaults() {
