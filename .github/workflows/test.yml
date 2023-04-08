@@ -20,7 +20,7 @@ jobs:
       
       - name: Install ARM Embedded Toolchain for C++20
         run: |
-          wget -O arm_toolchain.tar.gz https://developer.arm.com/-/media/Files/downloads/gnu-rm/11.3-2021.10/gcc-arm-none-eabi-11.3-2021.10-x86_64-linux.tar.bz2
+          wget -O arm_toolchain.tar.gz https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
           tar -xvf arm_toolchain.tar.gz
           export PATH=$PWD/gcc-arm-none-eabi-11.3-2021.10/bin:$PATH
 
