@@ -237,57 +237,57 @@ std::int32_t Motor::setVoltageLimit(const std::int32_t ilimit) {
   return pros::c::motor_set_voltage_limit(port, ilimit);
 }
 
-std::int32_t Motor::setPosPID(const pros::motor_pid_s_t &motor, 
-                              const double ikF, 
-                              const double ikP, 
-                              const double ikI, 
-                              const double ikD) {
-  //return pros::c::motor_set_pos_pid(port, pros::c::motor_convert_pid(ikF, ikP, ikI, ikD));
+// std::int32_t Motor::setPosPID(const pros::motor_pid_s_t &motor, 
+//                               const double ikF, 
+//                               const double ikP, 
+//                               const double ikI, 
+//                               const double ikD) {
+//   //return pros::c::motor_set_pos_pid(port, pros::c::motor_convert_pid(ikF, ikP, ikI, ikD));
 
 
-  if (motor != NULL){ //Check that the given motor or motor group actually exists
-    motor.kf = std::hex << ( std::trunc( ikF * 16 ) ); //Multiply double input by 16, truncate remaining decimals, and convert to hex
-    motor.kP = std::hex << ( std::trunc( ikP * 16 ) );
-    motor.kI = std::hex << ( std::trunc( ikI * 16 ) );
-    motor.kD = std::hex << ( std::trunc( ikD * 16 ) );
+//   if (motor != NULL){ //Check that the given motor or motor group actually exists
+//     motor.kf = std::hex << ( std::trunc( ikF * 16 ) ); //Multiply double input by 16, truncate remaining decimals, and convert to hex
+//     motor.kP = std::hex << ( std::trunc( ikP * 16 ) );
+//     motor.kI = std::hex << ( std::trunc( ikI * 16 ) );
+//     motor.kD = std::hex << ( std::trunc( ikD * 16 ) );
 
-    return 1;
-  }
+//     return 1;
+//   }
 
-  //If motor isn't real return error
-  return PROS_ERR;
-}
+//   //If motor isn't real return error
+//   return PROS_ERR;
+// }
 
-std::int32_t Motor::setPosPIDFull(const pros::motor_pid_full_s_t &motor,
-                                  const double ikF,
-                                  const double ikP,
-                                  const double ikI,
-                                  const double ikD,
-                                  const double ifilter,
-                                  const double ilimit,
-                                  const double ithreshold,
-                                  const double iloopSpeed) {
-  // return pros::c::motor_set_pos_pid_full(
-  //   port,
-  //   pros::c::motor_convert_pid_full(ikF, ikP, ikI, ikD, ifilter, ilimit, ithreshold, iloopSpeed));
+// std::int32_t Motor::setPosPIDFull(const pros::motor_pid_full_s_t &motor,
+//                                   const double ikF,
+//                                   const double ikP,
+//                                   const double ikI,
+//                                   const double ikD,
+//                                   const double ifilter,
+//                                   const double ilimit,
+//                                   const double ithreshold,
+//                                   const double iloopSpeed) {
+//   // return pros::c::motor_set_pos_pid_full(
+//   //   port,
+//   //   pros::c::motor_convert_pid_full(ikF, ikP, ikI, ikD, ifilter, ilimit, ithreshold, iloopSpeed));
 
-  if (motor != NULL){ //Check that the given motor actually exists
-    motor.kf = std::hex << ( std::trunc( ikF * 16 ) ); //Multiply double input by 16, truncate remaining decimals, and convert to hex
-    motor.kP = std::hex << ( std::trunc( ikP * 16 ) );
-    motor.kI = std::hex << ( std::trunc( ikI * 16 ) );
-    motor.kD = std::hex << ( std::trunc( ikD * 16 ) );
-    motor.filter = std::hex << ( std::trunc( ifilter * 16 ) );
-    motor.limit = std::hex << ( std::trunc( ilimit * 16 ) );
-    motor.threshold = std::hex << ( std::trunc( ithreshold * 16 ) );
-    motor.loopspeed = std::hex << ( std::trunc( iloopSpeed * 16 ) );
+//   if (motor != NULL){ //Check that the given motor actually exists
+//     motor.kf = std::hex << ( std::trunc( ikF * 16 ) ); //Multiply double input by 16, truncate remaining decimals, and convert to hex
+//     motor.kP = std::hex << ( std::trunc( ikP * 16 ) );
+//     motor.kI = std::hex << ( std::trunc( ikI * 16 ) );
+//     motor.kD = std::hex << ( std::trunc( ikD * 16 ) );
+//     motor.filter = std::hex << ( std::trunc( ifilter * 16 ) );
+//     motor.limit = std::hex << ( std::trunc( ilimit * 16 ) );
+//     motor.threshold = std::hex << ( std::trunc( ithreshold * 16 ) );
+//     motor.loopspeed = std::hex << ( std::trunc( iloopSpeed * 16 ) );
 
-    return 1;
-  }
+//     return 1;
+//   }
 
-  //If motor isn't real return error
-  return PROS_ERR;
+//   //If motor isn't real return error
+//   return PROS_ERR;
   
-}
+// }
 
 // std::int32_t
 // Motor::setVelPID(const double ikF, const double ikP, const double ikI, const double ikD) {

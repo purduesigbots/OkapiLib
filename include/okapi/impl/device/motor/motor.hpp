@@ -368,7 +368,7 @@ class Motor : public AbstractMotor {
    * @param ikD the derivative constant
    * @return 1 if the operation was successful or PROS_ERR if the operation failed, setting errno.
    */
-  virtual std::int32_t setPosPID(pros::motor_pid_s_t &motor, double ikF, double ikP, double ikI, double ikD);
+  // virtual std::int32_t setPosPID(pros::motor_pid_s_t &motor, double ikF, double ikP, double ikI, double ikD);
 
   /**
    * Sets new PID constants.
@@ -384,15 +384,15 @@ class Motor : public AbstractMotor {
    * @param iloopSpeed the rate at which the PID computation is run (in ms)
    * @return 1 if the operation was successful or PROS_ERR if the operation failed, setting errno.
    */
-  virtual std::int32_t setPosPIDFull(pros::motor_pid_full_s_t &motor,
-                                     double ikF,
-                                     double ikP,
-                                     double ikI,
-                                     double ikD,
-                                     double ifilter,
-                                     double ilimit,
-                                     double ithreshold,
-                                     double iloopSpeed);
+  // virtual std::int32_t setPosPIDFull(pros::motor_pid_full_s_t &motor,
+  //                                    double ikF,
+  //                                    double ikP,
+  //                                    double ikI,
+  //                                    double ikD,
+  //                                    double ifilter,
+  //                                    double ilimit,
+  //                                    double ithreshold,
+  //                                    double iloopSpeed);
 
   /**
    * Sets new PID constants.
