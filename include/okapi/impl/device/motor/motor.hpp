@@ -361,17 +361,19 @@ class Motor : public AbstractMotor {
   /**
    * Sets new PID constants.
    *
+   * @param motor a PROS struct of type motor_pid_s_t so the PID values can be set. Note the arugment is passed by refrence
    * @param ikF the feed-forward constant
    * @param ikP the proportional constant
    * @param ikI the integral constant
    * @param ikD the derivative constant
    * @return 1 if the operation was successful or PROS_ERR if the operation failed, setting errno.
    */
-  virtual std::int32_t setPosPID(pros::motor_pid_full_s_t motor, double ikF, double ikP, double ikI, double ikD);
+  virtual std::int32_t setPosPID(pros::motor_pid_s_t &motor, double ikF, double ikP, double ikI, double ikD);
 
   /**
    * Sets new PID constants.
    *
+   * @param motor a PROS struct of type motor_pid_full_s_t so the PID values can be set. Note the arugment is passed by refrence
    * @param ikF the feed-forward constant
    * @param ikP the proportional constant
    * @param ikI the integral constant
@@ -382,7 +384,7 @@ class Motor : public AbstractMotor {
    * @param iloopSpeed the rate at which the PID computation is run (in ms)
    * @return 1 if the operation was successful or PROS_ERR if the operation failed, setting errno.
    */
-  virtual std::int32_t setPosPIDFull(pros::motor_pid_full_s_t motor,
+  virtual std::int32_t setPosPIDFull(pros::motor_pid_full_s_t &motor,
                                      double ikF,
                                      double ikP,
                                      double ikI,

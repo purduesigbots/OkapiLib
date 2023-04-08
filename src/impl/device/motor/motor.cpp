@@ -237,11 +237,15 @@ std::int32_t Motor::setVoltageLimit(const std::int32_t ilimit) {
   return pros::c::motor_set_voltage_limit(port, ilimit);
 }
 
-std::int32_t
-Motor::setPosPID(const pros::motor_pid_s_t motor, const double ikF, const double ikP, const double ikI, const double ikD) {
+std::int32_t Motor::setPosPID(const pros::motor_pid_s_t &motor, 
+                              const double ikF, 
+                              const double ikP, 
+                              const double ikI, 
+                              const double ikD) {
   //return pros::c::motor_set_pos_pid(port, pros::c::motor_convert_pid(ikF, ikP, ikI, ikD));
 
-  if (motor != NULL){ //Check that the given motor actually exists
+
+  if (motor != NULL){ //Check that the given motor or motor group actually exists
     motor.kf = std::hex << ( std::trunc( ikF * 16 ) ); //Multiply double input by 16, truncate remaining decimals, and convert to hex
     motor.kP = std::hex << ( std::trunc( ikP * 16 ) );
     motor.kI = std::hex << ( std::trunc( ikI * 16 ) );
@@ -254,7 +258,7 @@ Motor::setPosPID(const pros::motor_pid_s_t motor, const double ikF, const double
   return PROS_ERR;
 }
 
-std::int32_t Motor::setPosPIDFull(const pros::motor_pid_full_s_t motor,
+std::int32_t Motor::setPosPIDFull(const pros::motor_pid_full_s_t &motor,
                                   const double ikF,
                                   const double ikP,
                                   const double ikI,
