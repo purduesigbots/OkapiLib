@@ -19,7 +19,10 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y python3-pip
 
       - name: Install pros-cli
-        run: pip3 install pros-cli
+        run: |
+          sudo apt-get install zlib1g-dev -y
+          pip3 install pyinstaller
+          pip3 install pros-cli
 
       - name: Update Submodules
         run: git submodule update --init --recursive
