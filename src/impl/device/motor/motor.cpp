@@ -101,7 +101,7 @@ std::int32_t Motor::isOverTemp() {
 }
 
 std::int32_t Motor::isStopped() {
-  return pros::c::motor_is_stopped(port);
+  return std::abs(pros::c::motor_get_actual_velocity(port)) <= 1;
 }
 
 std::int32_t Motor::getZeroPositionFlag() {
