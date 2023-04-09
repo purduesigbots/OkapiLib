@@ -32,7 +32,7 @@ double IMU::getRemapped(const double iupperBound, const double ilowerBound) cons
 }
 
 double IMU::getAcceleration() const {
-  const pros::imu_accel_s_t accel = pros::get_accel(port);
+  const pros::imu_accel_s_t accel = pros::c::imu_get_accel(port);
 
   switch (axis) {
   case IMUAxes::x: //Depending on the axes selected return double value of x,y,or z accel from pros::imu_accel_s_t struct
@@ -120,8 +120,6 @@ double IMU::readAngle() const {
 }
 
 bool IMU::isCalibrating() const {
-  //return pros::c::imu_get_status(port) & pros::c::E_IMU_STATUS_CALIBRATING;
-
-  return pros::is_calibrating();
+  return pros::c::imu_get_status(port) & pros::E_IMU_STATUS_CALIBRATING;
 }
 } // namespace okapi
