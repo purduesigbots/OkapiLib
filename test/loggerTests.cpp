@@ -12,7 +12,10 @@ using namespace okapi;
 class LoggerTest : public ::testing::Test {
   protected:
   virtual void SetUp() {
-    logFile = open_memstream(&logBuffer, &logSize);
+    logBuffer = new char[logSize];
+    // For testing, we always write, then rewind and read
+    // so it is not an issue to open in write vs append
+    logFile = fmemopen(logBuffer, logSize, "w+");
   }
 
   virtual void TearDown() {
@@ -20,7 +23,7 @@ class LoggerTest : public ::testing::Test {
     if (logger) {
       logger->close();
     }
-    free(logBuffer);
+    delete[] logBuffer;
   }
 
   void logData(const std::shared_ptr<Logger> &) const {
@@ -32,7 +35,7 @@ class LoggerTest : public ::testing::Test {
 
   FILE *logFile;
   char *logBuffer;
-  size_t logSize;
+  size_t logSize = 10000;
   std::shared_ptr<Logger> logger;
 };
 
@@ -41,14 +44,13 @@ TEST_F(LoggerTest, OffLevel) {
     std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::off);
 
   logData(logger);
+  rewind(logFile);
 
   char *line = nullptr;
   size_t len;
 
-  fputs("EMPTY_FILE", logFile);
-
-  getline(&line, &len, logFile);
-  EXPECT_STREQ(line, "EMPTY_FILE");
+  // Check that we are done reading
+  EXPECT_EQ(getline(&line, &len, logFile), EOF);
 
   if (line) {
     free(line);
@@ -60,6 +62,7 @@ TEST_F(LoggerTest, ErrorLevel) {
     std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::error);
 
   logData(logger);
+  rewind(logFile);
 
   char *line = nullptr;
   size_t len;
@@ -67,6 +70,8 @@ TEST_F(LoggerTest, ErrorLevel) {
   getline(&line, &len, logFile);
   std::string expected = "0 (" + CrossplatformThread::getName() + ") ERROR: MSG\n";
   EXPECT_STREQ(line, expected.c_str());
+
+  EXPECT_EQ(getline(&line, &len, logFile), EOF);
 
   if (line) {
     free(line);
@@ -78,6 +83,7 @@ TEST_F(LoggerTest, WarningLevel) {
     std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::warn);
 
   logData(logger);
+  rewind(logFile);
 
   char *line = nullptr;
   size_t len;
@@ -90,6 +96,8 @@ TEST_F(LoggerTest, WarningLevel) {
   expected = "0 (" + CrossplatformThread::getName() + ") WARN: MSG\n";
   EXPECT_STREQ(line, expected.c_str());
 
+  EXPECT_EQ(getline(&line, &len, logFile), EOF);
+
   if (line) {
     free(line);
   }
@@ -100,6 +108,7 @@ TEST_F(LoggerTest, InfoLevel) {
     std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::info);
 
   logData(logger);
+  rewind(logFile);
 
   char *line = nullptr;
   size_t len;
@@ -116,6 +125,8 @@ TEST_F(LoggerTest, InfoLevel) {
   expected = "0 (" + CrossplatformThread::getName() + ") INFO: MSG\n";
   EXPECT_STREQ(line, expected.c_str());
 
+  EXPECT_EQ(getline(&line, &len, logFile), EOF);
+
   if (line) {
     free(line);
   }
@@ -126,6 +137,7 @@ TEST_F(LoggerTest, DebugLevel) {
     std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::debug);
 
   logData(logger);
+  rewind(logFile);
 
   char *line = nullptr;
   size_t len;
@@ -146,6 +158,8 @@ TEST_F(LoggerTest, DebugLevel) {
   expected = "0 (" + CrossplatformThread::getName() + ") DEBUG: MSG\n";
   EXPECT_STREQ(line, expected.c_str());
 
+  EXPECT_EQ(getline(&line, &len, logFile), EOF);
+
   if (line) {
     free(line);
   }
@@ -153,20 +167,22 @@ TEST_F(LoggerTest, DebugLevel) {
 
 TEST_F(LoggerTest, TestLazyLogging) {
   logger = std::make_shared<Logger>(
-    std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::info);
+    std::make_unique<ConstantMockTimer>(0_ms), logFile, Logger::LogLevel::debug);
 
-  int x = 0;
-  logger->debug([=, &x]() {
-    x++;
-    return std::string("");
+  logger->debug([=]() {
+    return std::string("MSG");
   });
 
-  EXPECT_EQ(x, 0);
+  rewind(logFile);
 
   char *line = nullptr;
   size_t len;
 
   getline(&line, &len, logFile);
+  std::string expected = "0 (" + CrossplatformThread::getName() + ") DEBUG: MSG\n";
+  EXPECT_STREQ(line, expected.c_str());
+
+  EXPECT_EQ(getline(&line, &len, logFile), EOF);
 
   if (line) {
     free(line);
