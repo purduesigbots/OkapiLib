@@ -92,6 +92,16 @@ class CrossplatformThread {
   }
 #endif
 
+#ifdef THREADS_STD
+  std::uint32_t notify() {
+    return 1;
+  }
+#else
+  std::uint32_t notify() {
+    return pros::c::task_notify(thread);
+  }
+#endif
+
   static std::string getName() {
 #ifdef THREADS_STD
     std::ostringstream ss;
